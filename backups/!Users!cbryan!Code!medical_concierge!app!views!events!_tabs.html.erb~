@@ -1,0 +1,74 @@
+<script>
+  Event.observe(window, 'load',
+    function() {
+      var subtab = document.location.hash.substr(1);
+      console.log('bading!');
+      console.log(subtab);
+      if (subtab != "") {
+        changeTab(subtab);
+      }
+    }
+  );
+
+ function changeTab(sub_view){
+   //document.getElementById('sub_form').value = sub_view
+
+   new Ajax.Updater('panel_1', '/events/tabs', {
+      method: 'post',
+      parameters: {authenticity_token: '<%= form_authenticity_token %>', sub_view: sub_view },
+
+      onSuccess: function(transport){
+        var response = transport.responseText || "no response text";
+        //alert("Success! \n\n" + response);
+      },
+      onComplete:function(transport){
+        getReport()
+      },
+      onFailure: function(){ alert('Something went wrong...') }
+      });
+  }
+
+
+</script>
+
+
+<%  @mclass = "" %>
+<%  @wclass = "" %>
+<%  @aclass = "" %>
+<%  @rclass = "" %>
+
+
+<% if (session['sub_view'].to_s == 'monthly') %>
+  <%  @mclass = "active" %>
+<% elsif  (session['sub_view'].to_s == 'weekly')%>
+  <%  @wclass = "active" %>
+<% elsif  (session['sub_view'].to_s == 'agenda')%>
+  <%  @aclass = "active" %>
+<% elsif  (session['sub_view'].to_s == 'report')%>
+  <%  @rclass = "active" %>
+<% else %>
+  <%  @mclass = "active" %>
+<%  end %>
+
+<table width="100%">
+  <tr>
+    <td>
+    <ol id="toc">
+      <!-- <li><a href="javascript:changeTab('monthly')" class="<%= @mclass %>"><span>Monthly View</span></a></li> -->
+      <li><a href="?pane=monthly" class="<%= @mclass %>"><span>Monthly View</span></a></li>
+    <!--
+      <li><a href="javascript:changeTab('weekly')" class="<%= @wclass %>"><span>Weekly View</span></a></li>
+    -->
+      <li><a href="?pane=agenda" class="<%= @aclass %>"><span>Agenda</span></a></li>
+      <li><a href="?pane=report" class="<%= @rclass %>"><span>Patient Activity Report</span></a></li>
+    </ol>
+  </td>
+  <td align="center"><%= monthly_links(:date => @date) %>
+  </td>
+  <!--
+  <td align="right">
+    <a href="javascript:newEvent()">New <%=  EVENT_NAME %></a>
+  </td>
+  -->
+  </tr>
+</table>

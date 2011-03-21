@@ -1,0 +1,414 @@
+require 'uri'
+
+class UsersController < ApplicationController
+  layout "application", :except => [ :login, :showUsers]
+  protect_from_forgery :except => [:login, :ajax_login]
+
+  before_filter :login_required, :except => [:login, :logout_user, :ajax_login]
+
+  def index
+     # debugger
+     if !params[:interface]
+       @current_tab = "tab1"
+     elsif params[:interface].to_i == 1
+       @current_tab = "tab1"
+     elsif params[:interface].to_i == 2
+       @current_tab = 'tab2'
+     elsif params[:interface].to_i == 3
+       @current_tab = 'tab3'
+     end
+    
+     # first name query string
+     @queryFirstStr = ""
+      if (!params[:query_first].nil?)
+        if params[:query_first].to_s.length >= 1
+           @queryFirstStr = params[:query_first].to_s
+        end
+      end
+      
+      
+     @queryActiveStr = session['status'] = 0 if params[:query_active].nil? and session['status'].nil?
+     session['status'] = @queryActiveStr = params[:query_active] if !params[:query_active].nil?
+     @queryActiveStr = session['status'] if params[:query_active].nil?
+
+
+     # last name query string
+     @queryLastStr = ""
+      if (!params[:query_last].nil?)
+        if params[:query_last].to_s.length >= 1
+           @queryLastStr = params[:query_last].to_s
+        end
+      end
+
+
+     # display number of items
+      if params[:items].nil?
+          itemStr = "30"
+      else
+        if params[:items].to_s.length >= 1
+           itemStr = params[:items].to_s
+           if (itemStr.to_i < 1)
+             itemStr = "30"
+           end
+        else
+           itemStr = "30"
+        end
+      end
+
+    @items = itemStr
+
+    # which user type
+    @typeStr = "1"
+    if (!params[:interface].nil?)
+        if params[:interface].to_s.length >= 1
+           @typeStr = params[:interface].to_s
+        end
+    end
+
+
+     # sort order
+     if params[:sort].nil?
+           sort = "lastName"
+     else
+      sort = case params['sort']
+             when "lastName"  then "lastName"
+             when "firstName"  then "firstName"
+             when "email"   then "email_work"
+             when "company"   then "companyName"
+             when "unit"   then "unit_id"
+             when "phone" then "phone_work"
+             when "interface" then "interface"
+             when "active" then "active"
+             when "login" then "login"
+             when "lastName_reverse"  then "lastName DESC"
+             when "firstName_reverse"  then "firstName DESC"
+             when "email_reverse"   then "email_work DESC"
+             when "company_reverse"   then "companyName DESC"
+             when "unit_reverse" then "unit_id DESC"
+             when "phone_reverse" then "phone_work DESC"
+             when "interface_reverse" then "interface DESC"
+             when "active_reverse" then "active DESC"
+             when "login_reverse" then "login DESC"
+           end
+      end
+
+    sql = create_sql(@queryFirstStr, @queryLastStr, @typeStr, @queryActiveStr)
+    sql += " ORDER BY " + sort
+
+    @users = User.search(sql, params[:page], itemStr.to_i, sort)
+    @total = User.count_filtered(sql)
+
+    @sub_form = "users_list"
+    if (@typeStr.to_s != CLIENT.to_s)
+      @sub_form = "company_list"
+    end
+
+    if request.xml_http_request?
+        render :partial => @sub_form, :layout => false
+    end
+
+
+  end
+
+
+  def create_sql(queryFirstStr, queryLastStr, userType, queryActiveStr)
+   sql_client = "SELECT users.*, profiles.nav_id,profiles.current_status as current_status, groups_navs.navigator_id FROM (users INNER JOIN profiles ON users.id = profiles.user_id) LEFT JOIN groups_navs ON profiles.nav_id = groups_navs.group_id  WHERE 1=1 "
+   sql = "SELECT users.* from users WHERE 1=1  "
+   ret_sql = ""
+   query_sql = ""
+   
+    if (queryFirstStr.to_s.length > 0)
+      query_sql += " AND users.firstName LIKE '" + queryFirstStr.to_s + "%' "
+    end
+    #    
+ 
+    if (queryLastStr.to_s.length > 0)
+      query_sql += " AND users.lastName LIKE '" + queryLastStr.to_s + "%' "
+    end
+    
+    if (!queryActiveStr.nil? and userType.to_i == 1)
+      query_sql += " AND profiles.current_status = #{queryActiveStr.to_i} "
+    end
+
+    query_sql = query_sql + " AND users.interface = " + userType.to_s
+
+    if (userType.to_i == CLIENT.to_i)
+      query_sql = query_sql + " AND groups_navs.navigator_id = " + session['user'].id.to_s  + " "
+      ret_sql = sql_client + query_sql
+    else
+      ret_sql = sql + query_sql
+    end
+    
+    return ret_sql
+
+  end
+
+  # using this to reset the current client - from header
+  def show
+    @current_client = User.find(params[:id])
+    session['client'] = @current_client
+
+    @view = params['view']
+    
+    @sub_view = session['sub_view']
+    
+   
+    if (@view.to_s == CALENDAR)
+      redirect_to( {:controller=>'events'}, :sub_form=> @sub_view)
+    else
+      redirect_to( :controller=>'folders', :action=> :edit, :id=>Topic.find(@current_client.topic_id).root_folder)
+    end
+
+  end
+
+  def new
+    @page_title="Add new user"
+    load_data
+    @user = User.new
+    @units = ""
+
+  end
+
+
+ def create
+    @user = User.new(params[:user])
+    respond_to do |format|
+      if @user.save
+        if (@user.interface == NAVIGATOR)
+          User.check_nav_groups
+        end
+
+        flash[:notice] = 'User was successfully created.'
+        format.html { redirect_to(:controller=>'users') }
+      else
+        format.html { render :action => "new" }
+      end
+    end
+  end
+
+  def quickClientAdd
+  
+    @user = User.new(params[:user])
+
+    # assign to person who added the user
+    @user.assigned_to = session['user'].id
+    
+    if @user.save
+        flash[:notice] = 'User was successfully created.'
+        session['client'] = @user
+
+      @topic = Topic.new()
+      @topic.name = @user.firstName + " " + @user.lastName
+      @topic.rights = DEFAULT_TOPIC_RIGHTS
+      if @topic.save
+        # add current user
+        @topic.users << session['user']
+  
+       # create root folder
+        @folder = Folder.new(:name=>@topic.name)
+        @topic.folders << @folder
+
+        # set default workspace /folder
+        @user.topic_id = @topic.id
+        @user.current_folder = @folder.id
+        @user.save
+
+      end
+    end
+
+    respond_to do |format| 
+        format.html { redirect_to(:controller=>'users', :action=>'edit', :id=>@user.id, :sub_form=>'/users/demographics') }
+    end
+  end
+
+
+  def edit
+
+    @page_title="Edit user"
+    if (!params['date'].nil?)
+      @sched_date = date_from_string(params['date'])
+    end
+   
+    @subform = session['sub_view'].to_s
+
+    if (!params['sub_form'].nil?)
+      @subform = params['sub_form'].to_s
+      session['sub_view'] = params['sub_form'].to_s
+    end
+
+    if (@subform.to_s.length == 0)
+      @subform = '/notes/contacts'
+    end
+
+    load_data
+    @user = User.find(params[:id])
+    @user.password=nil
+    session['client'] = @user
+
+  end
+
+  def edit_self
+    @page_title="Edit user"
+    load_data
+    @user = User.find(params[:id])
+    @user.password=nil
+    @units = Unit.find(:all, :conditions => ['company_id = ?', @user.company_id])
+  end
+
+  def update
+    @user = User.find(params[:id])
+    current_password = @user.password
+    user_password = params[:user]['password'].to_s
+ 
+    respond_to do |format|
+      if @user.update_attributes(params[:user])
+         # write as encrypted
+        if user_password.length == 0
+          # put encrypted back in
+          @user.update_attribute :password, current_password
+        else
+          @user.change_password user_password
+        end
+
+        if (@user.interface == NAVIGATOR)
+          User.check_nav_groups
+        end
+
+        flash[:notice] = 'User was successfully updated.'
+        format.html { redirect_to :controller=>'users', :action=>'edit', :id=>@user.id }
+      else
+        format.html { render :action => "edit" }
+      end
+    end
+  end
+
+  def update_user
+    @route_to_form = params[:mine][:form]
+   
+    @id = params[:user][:id]
+    @user = User.find(@id)
+    current_password = @user.password
+    user_password = params[:user]['password'].to_s
+
+    if @user.update_attributes(params[:user])
+         # write as encrypted
+        if user_password.length == 0
+          # put encrypted back in
+          @user.update_attribute :password, current_password
+        else
+          @user.change_password user_password
+        end
+
+        if (@user.interface == NAVIGATOR)
+          User.check_nav_groups
+        end
+
+
+    end
+    render :partial=> @route_to_form.to_s
+
+  end
+
+
+  def update_status
+    @user = User.find(params[:id])
+    if (@user.active == 0)
+      @user.active = 1
+    else
+      @user.active = 0
+    end
+    @user.save
+
+    render :text=> @user.get_active.to_s
+
+  end
+
+
+  def destroy
+    User.find(params[:id]).destroy
+    respond_to do |format|
+      format.html { redirect_to :controller=>'users' }
+    end
+  end
+
+  def login
+    #@announcements = Announcement.find(:all,  :order => 'created_at')
+    case request.method
+    when :post
+
+      # retrieve user settings string - get last screen, client, etc.
+
+         if session['user'] = User.authenticate(params['user_login'], params['user_password'])
+            # set default client right to login person
+            @client = User.find(session['user'].id)
+            session['client'] = @client
+
+
+        #if session['user'].status.to_s != "1"   # active user
+            flash['notice']  = "Login successful"
+            if session['user'].interface == PROVIDER
+              redirect_back_or_default :controller=> 'users'
+            elsif session['user'].interface == CLIENT
+               redirect_back_or_default :controller=> 'users'
+            else
+              redirect_back_or_default :controller=> 'users'
+            end
+          #end
+         else
+            @login    = params['user_login']
+            @message  = "Login unsuccessful"
+            redirect_to :controller => "users", :action=> 'login'
+
+         end
+    end
+  end
+
+  def ajax_login
+       if session['user'] = User.authenticate(params['user_login'], params['user_password'])
+            # set default client right to login person
+            @client = User.find(session['user'].id)
+            session['client'] = @client
+          retStr = 'ok'
+       else
+          retStr = 'no'
+       end
+    render :text=> retStr
+  end
+  
+
+  def logout
+    session['user'] = nil 
+    session['client'] = nil
+    session['section'] = nil
+    session['view'] = nil
+
+    respond_to do |format|
+        format.html { redirect_to('/') }
+    end
+
+  end
+
+  def tabs
+    @user = User.find(session['client'].id)
+    @user.password=nil
+
+    sub_view = params['sub_view']
+
+    if (sub_view.to_s == 'CANCEL')
+      sub_view = session['sub_view'].to_s
+    else
+      session['sub_view'] = sub_view
+    end
+      
+    render :partial=>sub_view
+
+  end
+
+  def load_data
+   @roles = Ref.find(:all, :conditions=>[ "category = 'ROLE' "])
+  end
+
+
+
+
+end

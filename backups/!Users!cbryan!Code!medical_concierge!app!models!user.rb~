@@ -1,0 +1,168 @@
+require 'digest/sha1'
+
+class User < ActiveRecord::Base
+
+  belongs_to :company
+  has_one :profile
+  
+  attr_accessor :password_confirmation
+
+  def self.authenticate(login, pass)
+    find(:first, :conditions=>["login = ? AND password = ?", login, sha1(pass)])
+  end
+
+  def change_password(pass)
+    update_attribute "password", self.class.sha1(pass)
+  end
+
+  def lastFirst
+    lastName + ", " + firstName
+  end
+
+  def lastFirstCompany
+    strName=""
+    if (!lastName.nil?)
+      strName= strName + lastName
+    end
+    if (!firstName.nil?)
+      strName= strName + ", " + firstName
+    end
+    if (!companyName.nil?)
+      if (companyName.to_s.length > 0)
+        strName= strName + " - " + companyName
+      end
+    end
+    strName
+    
+  end
+
+
+  def name
+    @first = ""
+    @last = ""
+    if (!firstName.nil?)
+      @first = firstName
+    end
+
+    if (!lastName.nil?)
+      @last = lastName
+    end
+
+    return @first + " " + @last
+    
+  end
+
+  def get_interface
+    retString = "Provider"
+    tmp = Ref.find(:first, :conditions=>[ "category = 'interface' and value=?", self.interface])
+    if (!tmp.nil?)
+      retString = tmp.label.to_s
+    end
+    return retString
+  end
+
+  def get_active
+    if (status == 1)
+      "No"
+    else
+       "Yes"
+    end
+  end
+
+  def get_login
+    if (login == 1)
+      "No"
+    else
+       "Yes"
+    end
+  end
+
+
+  def can_edit(deal=0)
+    can_ed = false
+    if (role.to_i == LEVEL_2)
+      if (id == deal.user_id)
+        can_ed = true
+      end
+    elsif (role.to_i == LEVEL_3)
+      can_ed = true
+    end
+    return can_ed
+  end
+
+  def can_add
+    can_add = false
+    if (role.to_i >= LEVEL_2)
+      can_add = true
+    end
+    return can_add
+  end
+
+  protected
+
+  def self.sha1(pass)
+    Digest::SHA1.hexdigest("change-me--#{pass}--")
+  end
+
+  before_create :crypt_password
+  #before_update :crypt_password
+
+
+  def crypt_password
+    write_attribute("password", self.class.sha1(password))
+  end
+
+  #validates_length_of :login, :within => 3..40, :on => :create
+  #validates_length_of :password, :within => 5..40, :on => :create
+  #validates_presence_of :login, :password, :password_confirmation, :on => :create
+  #validates_uniqueness_of :login, :on => :create
+  #validates_confirmation_of :password, :on => :create
+
+
+
+  def self.search(sql, page, per_page, sort)
+
+    #sql = "SELECT users.* FROM users LEFT JOIN groups_navs ON users.assigned_to = groups_navs.group_id  WHERE 1=1 " + whereClause.to_s + sort
+    #sql = "SELECT users.*, profiles.nav_id, groups_navs.navigator_id FROM (users INNER JOIN profiles ON users.id = profiles.user_id) LEFT JOIN groups_navs ON profiles.nav_id = groups_navs.group_id  WHERE 1=1 "  + whereClause.to_s + sort
+
+    paginate_by_sql sql, :per_page => per_page, :page => page
+
+  end
+
+   def self.count_filtered(sql)
+
+    #sql = "SELECT users.*, profiles.nav_id, groups_navs.navigator_id FROM (users INNER JOIN profiles ON users.id = profiles.user_id) LEFT JOIN groups_navs ON profiles.nav_id = groups_navs.group_id  WHERE 1=1 " + whereClause.to_s
+
+    # create the count sql
+    count_sql = "select count(*) from (#{sql}) foo"
+
+    # get total number of pages
+    total = User.count_by_sql(count_sql)
+
+    return total
+
+  end
+
+  
+  def self.check_nav_groups
+  #verify that there is a nav group for each navigator
+  @navigators = User.find(:all, :conditions=>['interface = ?', NAVIGATOR])
+
+  @navigators.each do |nav|
+    @nav_group = GroupsNav.find(:first, :conditions=>['group_id = ? AND navigator_id = ?', nav.id, nav.id])
+    if(@nav_group.nil?)
+      GroupsNav.create :group_id => nav.id, :navigator_id => nav.id
+    end
+  end
+  end
+
+  def self.get_navs
+     @items = self.find_by_sql("SELECT users.* from users where interface = " + NAVIGATOR.to_s)
+  end
+
+
+
+
+
+end
+
