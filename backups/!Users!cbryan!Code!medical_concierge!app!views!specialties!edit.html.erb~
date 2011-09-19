@@ -1,6 +1,0 @@
-<div class="heading">Edit My Account</div>
-<% form_for @user do |f| %>
-  <%= f.error_messages %>
-  <%= render :partial => "form", :object => f %>
-  <%= f.submit "Update", :disable_with => 'Updating...', :class => 'green' %>
-<% end %>

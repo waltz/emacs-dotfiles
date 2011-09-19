@@ -57,7 +57,7 @@
 (require 'starter-kit-lisp)
 (require 'starter-kit-perl)
 (require 'starter-kit-ruby)
-(require 'starter-kit-js)
+;; (require 'starter-kit-js)
 
 (regen-autoloads)
 (load custom-file 'noerror)
@@ -68,6 +68,17 @@
 
 ;; Add the macports binary path so extensions can find all the binzzz
 (setq exec-path (append exec-path '("/opt/local/bin")) )
+
+;; A ring of rings of rings of buffers.
+(load "~/.emacs.d/vendor/dynamic-ring.el")
+(load "~/.emacs.d/vendor/buffer-ring.el")
+(require 'buffer-ring)
+
+;; js2-mode
+(add-to-list 'load-path "~/.emacs.d/vendor/js2-mode")
+;; (load "~/emacs.d/vendor/js2/js2.el")
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; AAAACK
 (add-to-list 'load-path "~/.emacs.d/vendor/full-ack")
@@ -109,19 +120,16 @@
 (server-start)
 
 ;; Smooth Scrolling
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 3))) ;; one line at a time
+;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1) ;; keyboard scroll one line at a time
 
-;; Douglas Crockford's JS2 mode. Hopefully better than the stock mode.
-;(setq load-path (append (list (expand-file-name "~/.emacs.d/js2")) load-path))
-;(add-to-list 'load-path "~/.emacs.d/vendor/js2")
-;(autoload 'js2-mode "js2" nil t)
-;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
-;; @defunkt's indenting hax for js2
-;(load-file "~/.emacs.d/vendor/defunkt-js-hax.el")
+;; HAML + SASS
+(load-file "~/.emacs.d/vendor/haml-mode/haml-mode.el")
+(require 'haml-mode)
+(load-file "~/.emacs.d/vendor/sass-mode/sass-mode.el")
+(require 'sass-mode)
 
 ;; You can keep system- or user-specific customizations here
 (setq system-specific-config (concat dotfiles-dir system-name ".el")
