@@ -74,11 +74,16 @@
 (load "~/.emacs.d/vendor/buffer-ring.el")
 (require 'buffer-ring)
 
+;; Load prefs.
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+
 ;; js2-mode
 (add-to-list 'load-path "~/.emacs.d/vendor/js2-mode")
-;; (load "~/emacs.d/vendor/js2/js2.el")
-(autoload 'js2-mode "js2" nil t)
+(autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(setq js2-consistent-level-indent-inner-bracket-p t)
+(setq js2-pretty-multiline-decl-indentation-p t)
 
 ;; AAAACK
 (add-to-list 'load-path "~/.emacs.d/vendor/full-ack")
