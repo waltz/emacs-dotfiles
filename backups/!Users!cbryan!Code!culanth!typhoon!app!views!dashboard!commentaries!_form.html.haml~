@@ -1,0 +1,19 @@
+= form_for [:dashboard, curated_collection], :html => { :multipart => true } do |f|
+  
+  = render "shared/error_messages", :target => curated_collection
+
+  %p
+    = f.label :title
+    %br/
+    = f.text_field :title
+    
+  %p
+    = f.label :user_ids, "Authors"
+    = user_selector(f.object.users, { :name => "author", :input_name => "curated_collection[user_ids][]" })
+
+  %p
+    = f.label :content
+    %br/
+    = f.text_area :content, :class => "editor"
+
+  = f.submit "Save", :disable_with => "Saving..."  

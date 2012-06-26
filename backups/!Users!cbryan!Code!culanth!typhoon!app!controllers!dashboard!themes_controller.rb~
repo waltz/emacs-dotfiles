@@ -1,0 +1,41 @@
+class Dashboard::ConversationsController < DashboardController
+
+  def index
+    @conversations = Conversation.all
+  end
+
+  def new
+    @conversation = Conversation.new
+  end
+
+  def create
+    @conversation = Conversation.new(params[:conversation])
+    if @conversation.save
+      redirect_to :action => :index
+    else
+      render :action => :new
+    end
+  end
+
+  def edit
+    @conversation = Conversation.find(params[:id])
+  end
+
+  def update
+    @conversation = Conversation.find(params[:id])
+    
+    if @conversation.update_attributes(params[:conversation])
+      redirect_to edit_dashboard_conversation_path(@conversation)
+    else
+      flash[:error] = "There was an issue saving your changes."
+      render :action => :edit
+    end    
+  end
+
+  def destroy
+    Conversation.destroy(params[:id])
+    flash[:message] = "Your conversation has been destroyed."
+    redirect_to :action => :index
+  end
+  
+end

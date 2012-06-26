@@ -1,0 +1,4 @@
+class AddDescriptionToConversations < ActiveRecord::Migration
+  def change
+  end
+end

@@ -1,0 +1,4 @@
+class AddCoverImageToIssues < ActiveRecord::Migration
+  def change
+  end
+end

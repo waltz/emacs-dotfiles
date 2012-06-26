@@ -1,0 +1,23 @@
+%h2 Fieldsights Conversations
+
+%p.new= link_to "Create a new Fieldsights Conversation", new_dashboard_conversation_path
+
+- if @conversations.present?
+  %table
+    %tr
+      %th ID
+      %th Name
+      %th Created On
+      %th Actions
+    - @conversations.each do |c|
+      %tr
+        %td= c.id
+        %td= c.name
+        %td= c.created_at
+        %td
+          = link_to "View", conversation_path(c)
+          = link_to "Edit", edit_dashboard_conversation_path(c)
+          = link_to "Delete", dashboard_conversation_path(c), :method => :delete, :confirm => "Are you sure you want to delete #{c.name}?"
+
+- else
+  %strong No conversations, get rolling!

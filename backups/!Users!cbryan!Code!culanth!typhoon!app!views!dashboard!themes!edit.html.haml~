@@ -1,0 +1,3 @@
+%fieldset
+  %legend Edit Conversation
+  = render :partial => "form", :locals => { :conversation => @conversation }

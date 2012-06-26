@@ -1,0 +1,14 @@
+class FieldsightsController < ApplicationController
+
+  def index
+    @title = "Fieldsights"
+    @recent_comments = Comment.where(:commentable_type => "Post").includes(:commentable).includes(:user).order("created_at DESC").limit(5)
+    @conversations = Conversation.all
+    @posts = Post.page(params[:page]).order("created_at DESC")
+  end
+
+  def show
+    @post = Post.find(params[:id])
+  end
+  
+end

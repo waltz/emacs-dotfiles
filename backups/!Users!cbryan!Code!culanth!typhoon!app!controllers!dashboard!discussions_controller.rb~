@@ -1,0 +1,49 @@
+class Dashboard::CommentariesController < DashboardController
+  before_filter :prime, :only => [ :new, :create, :edit, :update ]
+  
+  def index
+    @commentarys = Commentary.order("created_at DESC").all
+  end
+
+  def new
+    @commentary = Commentary.new
+  end
+
+  def create
+    @commentary = Commentary.new(params[:commentary])
+    if @commentary.save
+      redirect_to :action => :index
+    else
+      render :action => :new
+    end
+  end
+
+  def edit
+    @commentary = Commentary.find(params[:id])
+  end
+
+  def update
+    @commentary = Commentary.find(params[:id])
+    @commentary.update_attributes(params[:commentary])    
+    if @commentary.save
+      logger.info(@commentary.inspect)
+      redirect_to :action => :index
+    else
+      render :action => :edit
+    end
+  end
+
+  def destroy
+    Commentary.destroy(params[:id])
+    flash[:message] = "Your commentary has been destroyed."
+    redirect_to :action => :index
+  end
+
+  private
+
+  def prime
+    # @users = User.all
+    # @discussions = Discussion.all
+  end
+
+end

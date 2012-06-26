@@ -1,0 +1,4 @@
+class AddCuratedCollectionToSupplemental < ActiveRecord::Migration
+  def change
+  end
+end

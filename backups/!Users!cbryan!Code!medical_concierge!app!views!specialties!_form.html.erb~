@@ -1,0 +1,113 @@
+<%= form.label :login %><%= form.text_field :login %><br />
+<%= form.label :first_name %><%= form.text_field :firstname %><br />
+<%= form.label :last_name %><%= form.text_field :lastname %><br />
+
+<%# Alliances are useful to display, but editing them is a bit more complicated. %>
+<%= label_tag :alliance_display, "Alliance" -%>
+<%= text_field_tag :alliance_display, form.object.alliance.try(:name), :disabled => true -%>
+<br/>
+
+<%= form.label :facility_id, "Facility" -%>
+<% if form.object.alliance.present? %>
+  <%= form.select :facility_id, form.object.alliance.facilities.map { |x| [ x.name, x.id ] } -%>
+<% else %>
+  <%= text_field_tag :facility_display, "Set the alliance.", :disabled => true -%>
+<% end %>
+<br/>
+
+<%= form.label :title %>
+<%= form.text_field :title %>
+<br />
+
+<p>
+  <%= form.label :specialties %>
+  <ul id="specialties_list">
+    <% Specialty.all.each do |s| %>
+      <li>
+        <%= check_box_tag "user[specialty_ids][]",
+                          s.id,
+                          form.object.specialty_ids.include?(s.id.to_i),
+                          :id => "user_specialty_#{s.id}" -%>
+        <%= label_tag "user_specialty_#{s.id}", s.name.to_s -%>
+      </li>
+    <% end %>
+  </ul>
+</p>
+<br/>
+
+<%= form.label :address_1 %><%= form.text_field :address_1 %><br />
+<%= form.label :address_2 %><%= form.text_field :address_2 %><br />
+<%= form.label :city %><%= form.text_field :city %><br />
+<%= form.label :state %>
+  <%= select(:user, :state, [ 	
+  	['Select a State', 'None'],
+  	['Alabama', 'AL'], 
+  	['Alaska', 'AK'],
+  	['Arizona', 'AZ'],
+  	['Arkansas', 'AR'], 
+  	['California', 'CA'], 
+  	['Colorado', 'CO'], 
+  	['Connecticut', 'CT'], 
+  	['Delaware', 'DE'], 
+  	['District Of Columbia', 'DC'], 
+  	['Florida', 'FL'],
+  	['Georgia', 'GA'],
+  	['Hawaii', 'HI'], 
+  	['Idaho', 'ID'], 
+  	['Illinois', 'IL'], 
+  	['Indiana', 'IN'], 
+  	['Iowa', 'IA'], 
+  	['Kansas', 'KS'], 
+  	['Kentucky', 'KY'], 
+  	['Louisiana', 'LA'], 
+  	['Maine', 'ME'], 
+  	['Maryland', 'MD'], 
+  	['Massachusetts', 'MA'], 
+  	['Michigan', 'MI'], 
+  	['Minnesota', 'MN'],
+  	['Mississippi', 'MS'], 
+  	['Missouri', 'MO'], 
+  	['Montana', 'MT'], 
+  	['Nebraska', 'NE'], 
+  	['Nevada', 'NV'], 
+  	['New Hampshire', 'NH'], 
+  	['New Jersey', 'NJ'], 
+  	['New Mexico', 'NM'], 
+  	['New York', 'NY'], 
+  	['North Carolina', 'NC'], 
+  	['North Dakota', 'ND'], 
+  	['Ohio', 'OH'], 
+  	['Oklahoma', 'OK'], 
+  	['Oregon', 'OR'], 
+  	['Pennsylvania', 'PA'], 
+  	['Rhode Island', 'RI'], 
+  	['South Carolina', 'SC'], 
+  	['South Dakota', 'SD'], 
+  	['Tennessee', 'TN'], 
+  	['Texas', 'TX'], 
+  	['Utah', 'UT'], 
+  	['Vermont', 'VT'], 
+  	['Virginia', 'VA'], 
+  	['Washington', 'WA'], 
+  	['West Virginia', 'WV'], 
+  	['Wisconsin', 'WI'], 
+  	['Wyoming', 'WY']]) %>
+<br />
+
+
+<%= form.label :zip %><%= form.text_field :zip %><br />
+<br />
+<%= form.label :work_email %><%= form.text_field :email %><br />
+<%= form.label :home_email%><%= form.text_field :home_email %><br />
+<%= form.label :phone %><%= form.text_field :remote_phone %><br />
+<%= form.label :home_phone %><%= form.text_field :home_phone %><br />
+<%= form.label :mobile_phone %><%= form.text_field :mobile_phone %><br />
+<%= form.label :other_contact %><%= form.text_field :other_contact %><br />
+<%= form.label :other_contact_phone %><%= form.text_field :other_contact_phone %><br />
+<%= form.label :active %><%= form.check_box :active %><br />
+
+<%= form.label :password, form.object.new_record? ? nil : "Change password" %><%= form.password_field :password %><br />
+<%= form.label :pass_confirm %><%= form.password_field :password_confirmation %><br />
+<% if current_user and (current_user.has_role?('Admin') or current_user.has_role?('Developer'))%>
+  <label>Role</label><select name="role"><option><%= @user.roles.first %></option><option></option><option>Navigator</option><option>Admin</option></select><br />
+<%end%>

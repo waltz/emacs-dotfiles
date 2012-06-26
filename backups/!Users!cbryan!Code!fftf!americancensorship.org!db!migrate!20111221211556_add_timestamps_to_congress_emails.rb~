@@ -1,0 +1,4 @@
+class AddTimestampsToCongressEmails < ActiveRecord::Migration
+  def change
+  end
+end

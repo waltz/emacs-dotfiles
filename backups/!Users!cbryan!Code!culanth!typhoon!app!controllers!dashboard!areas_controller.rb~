@@ -1,0 +1,41 @@
+class Dashboard::ThemesController < DashboardController
+
+  def index
+    @themes = Theme.all
+  end
+
+  def new
+    @theme = Theme.new
+  end
+
+  def create
+    @theme = Theme.new(params[:theme])
+    if @theme.save
+      redirect_to :action => :index
+    else
+      render :action => :new
+    end
+  end
+
+  def edit
+    @theme = Theme.find(params[:id])
+  end
+
+  def update
+    @theme = Theme.find(params[:id])
+    
+    if @theme.update_attributes(params[:theme])
+      redirect_to edit_dashboard_theme_path(@theme)
+    else
+      flash[:error] = "There was an issue saving your changes."
+      render :action => :edit
+    end    
+  end
+
+  def destroy
+    Theme.destroy(params[:id])
+    flash[:message] = "Your theme has been destroyed."
+    redirect_to :action => :index
+  end
+  
+end

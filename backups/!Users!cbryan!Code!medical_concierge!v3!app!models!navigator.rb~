@@ -1,0 +1,37 @@
+class User < ActiveRecord::Base
+  attr :site_key 
+  attr_accessor :site_key 
+  acts_as_authentic
+  easy_roles :roles
+  scope :enabled, :conditions => "login != 'dev' AND enabled"
+  has_and_belongs_to_many :patients, :uniq => true
+  
+  belongs_to :facility
+  belongs_to :speciality
+  
+  validate :valid_site_key, :on => :create
+  validates_presence_of :login, :on => :create, :message => "can't be blank"
+  validates_presence_of :email, :on => :create, :message => "can't be blank"
+  validates_presence_of :firstname, :on => :create, :message => "can't be blank"
+  validates_presence_of :lastname, :on => :create, :message => "can't be blank"
+  validates_presence_of :city, :on => :create, :message => "can't be blank"
+  validates_presence_of :state, :on => :create, :message => "can't be blank"
+  validates_presence_of :home_phone, :on => :create, :message => "can't be blank"
+  
+  def deliver_password_reset_instructions!  
+    reset_perishable_token!  
+    Notifier.deliver_password_reset_instructions(self)  
+  end
+  
+  def full_name
+    (firstname + " " + lastname).titleize 
+  end
+  
+  private
+  
+  def valid_site_key
+    if site_key != 'mc2'
+      errors.add(:site_key, "incorrect, please contact support@healthcareoss.com")
+    end
+  end
+end

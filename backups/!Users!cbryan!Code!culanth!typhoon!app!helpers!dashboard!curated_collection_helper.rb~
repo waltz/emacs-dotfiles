@@ -1,0 +1,15 @@
+module Dashboard::CuratedCollectionHelper
+  def user_selector(collection, options = {})
+    options = { :name => "user" }.merge(options) # Defaults
+    content_tag :div, :class => "user-selector" do
+      field = text_field_tag "user-selector-search", nil, :placeholder => "Search for " + options[:name].capitalize.pluralize + "...", :class => "user-selector-search"      
+      container = content_tag :div, "", :class => "user-selector-results"
+      template = content_tag :div, :class => "hidden user-selector-template" do
+        content_tag :div, :class => "user-selected" do
+          content_tag :span, "", :class => "label", :data_user_name => ""
+        end
+      end      
+      field + container + template
+    end
+  end
+end

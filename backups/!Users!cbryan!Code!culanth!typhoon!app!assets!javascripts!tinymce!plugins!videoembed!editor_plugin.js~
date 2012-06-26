@@ -1,0 +1,26 @@
+(function() {
+  // tinymce.PluginManager.requireLangPack('simple-image-upload');
+  tinymce.create('tinymce.plugins.SimpleImageUpload', {
+    init: function(ed, url) {
+      ed.addCommand('open-form', function() {
+              ed.windowManager.open({
+                      file : '/dashboard/image_attachments/new',
+                      width : 400,
+                      height : 400,
+                      inline : 1
+              }, {
+                      plugin_url : url, // Plugin absolute URL
+                      some_custom_arg : 'custom arg' // Custom argument
+              });
+      });
+
+      // Register an example button
+      ed.addButton('upload-image', {
+        title : 'Upload an Image',
+        image : url + "/icon.png",
+        cmd: 'open-form'
+      });
+    }
+  });
+  tinymce.PluginManager.add("simpleimageupload", tinymce.plugins.SimpleImageUpload);
+})();

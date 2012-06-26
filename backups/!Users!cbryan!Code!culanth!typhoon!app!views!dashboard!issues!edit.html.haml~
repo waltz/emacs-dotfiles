@@ -1,0 +1,3 @@
+%fieldset
+  %legend Edit User
+  = render :partial => "form", :locals => { :user => @user }  

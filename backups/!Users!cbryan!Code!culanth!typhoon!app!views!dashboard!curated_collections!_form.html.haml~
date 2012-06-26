@@ -1,0 +1,29 @@
+= form_for [:dashboard, curated_collection], :html => { :multipart => true } do |f|
+  
+  = render "shared/error_messages", :target => curated_collection
+
+  %p
+    = f.label :title
+    %br/
+    = f.text_field :title
+
+  %p
+    = f.label :conversation_id
+    %br/
+    = f.select :conversation_id, Conversation.all.map { |c| [ c.name, c.id ] }, { :include_blank => true }
+
+  %p
+    - if f.object.curated_collection_image?
+      = image_tag f.object.curated_collection_image.url
+      %br/
+    = f.label :curated_collection_image, "Image"
+    %br/
+    = f.file_field :curated_collection_image
+    = f.hidden_field :curated_collection_image_cache
+
+  %p
+    = f.label :content
+    %br/
+    = f.text_area :content, :class => "editor"
+
+  = f.submit "Create a new CuratedCollection", :disable_with => "Building..."  

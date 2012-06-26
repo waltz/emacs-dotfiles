@@ -1,0 +1,53 @@
+# WeeklyCalendar by Dan McGrady 2009
+module WeeklyCalendar
+  
+  def weekly_calendar(objects, *args)
+    #view helper to build the weekly calendar
+    options = args.last.is_a?(Hash) ? args.pop : {}
+    date = options[:date] || Time.now
+    start_date = Date.new(date.year, date.month, date.day)
+    end_date = Date.new(date.year, date.month, date.day) + 6
+    
+    concat(tag("div", :id => "week"))
+  
+      yield WeeklyCalendar::Builder.new(objects || [], self, options, start_date, end_date)
+      
+    concat("</div>")
+    
+    if options[:include_24_hours] == true
+      concat("<b><a href='?business_hours=true&start_date=#{start_date}'>Business Hours</a> | <a href='?business_hours=false&start_date=#{start_date}'>24-Hours</a></b>")
+    end
+  end
+
+  def weekly_links(options)
+    #view helper to insert the next and previous week links
+    date = options[:date] || Time.now
+    start_date = Date.new(date.year, date.month, date.day)
+    end_date = Date.new(date.year, date.month, date.day) + 7
+    retStr = ""
+    retStr << "<a href='?start_date=#{start_date - 7}?user_id='>« Previous Week</a>   "
+    retStr << "#{start_date.strftime("%B %d -")} #{end_date.strftime("%B %d")} #{start_date.year}"
+    retStr << "   <a href='?start_date=#{start_date + 7}?user_id='>Next Week »</a>"
+    retStr
+
+  end
+
+  def monthly_links(options)
+    #view helper to insert the next and previous week links
+    date = options[:date] || Time.now
+    start_date = Date.new(date.year, date.month, 1)
+    next_date = start_date >> 1
+    prev_date = start_date << 1
+    
+    Logger.info("hai")
+    
+    retStr = "<div id='month_link'>"
+    retStr << "<a href='?start_date=#{prev_date}?user_id='>« Previous</a>   "
+    retStr << "#{start_date.strftime("%B")}, #{start_date.year}"
+    retStr << "   <a href='?start_date=#{next_date}?user_id='>Next »</a>"
+    retStr << "</div>"
+
+  end
+
+
+end

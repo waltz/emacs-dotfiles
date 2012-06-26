@@ -1,0 +1,12 @@
+(function() {
+  // tinymce.PluginManager.requireLangPack('simple-image-upload');
+  tinymce.create('tinymce.plugins.SimpleImageUpload', {
+    init: function(ed, url) {
+      // Register an example button
+      ed.addButton('upload-image', {
+        title : 'Upload an Image'
+      });
+    }
+  });
+  tinymce.PluginManager.add("simple-image-upload", "tinymce.plugins.SimpleImageUpload");
+})();

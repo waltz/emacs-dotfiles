@@ -1,0 +1,16 @@
+class PhotoEssay < ActiveRecord::Base
+end
+
+# == Schema Information
+#
+# Table name: photo_essays
+#
+#  id         :integer(4)      not null, primary key
+#  user_id    :integer(4)      not null
+#  issue_id   :integer(4)      not null
+#  title      :string(255)     not null
+#  content    :text            default(""), not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+

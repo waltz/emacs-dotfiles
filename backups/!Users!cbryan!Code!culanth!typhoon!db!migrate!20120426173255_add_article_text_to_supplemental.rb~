@@ -1,0 +1,4 @@
+class AddArticleTextToSupplemental < ActiveRecord::Migration
+  def change
+  end
+end

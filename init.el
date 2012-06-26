@@ -69,21 +69,29 @@
 ;; Add the macports binary path so extensions can find all the binzzz
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 
+;; Tell markdown-mode to use the binary provided by the markdown gem.
+(setq markdown-command "markdown")
+
 ;; A ring of rings of rings of buffers.
 (load "~/.emacs.d/vendor/dynamic-ring.el")
 (load "~/.emacs.d/vendor/buffer-ring.el")
 (require 'buffer-ring)
 
-;; Load prefs.
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+;; nXhtml for sweet sweet web editing.
+(add-to-list 'load-path "~/.emacs.d/vendor/nxhtml")
+(load "~/.emacs.d/vendor/nxhtml/autostart.el")
+(setq mumamo-background-colors nil)
 
 ;; js2-mode
 (add-to-list 'load-path "~/.emacs.d/vendor/js2-mode")
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(setq js2-consistent-level-indent-inner-bracket-p t)
-(setq js2-pretty-multiline-decl-indentation-p t)
+;; (setq-default js2-consistent-level-indent-inner-bracket-p 1)
+;; (setq-default js2-pretty-multiline-decl-indentation-p 1)
+
+;; Load prefs.
+;;(setq custom-file "~/.emacs.d/custom.el")
+;;(load custom-file)
 
 ;; AAAACK
 (add-to-list 'load-path "~/.emacs.d/vendor/full-ack")
@@ -91,11 +99,6 @@
 (autoload 'ack "full-ack" nil t)
 (autoload 'ack-find-same-file "full-ack" nil t)
 (autoload 'ack-find-file "full-ack" nil t)
-
-;; nXhtml for sweet sweet web editing.
-(add-to-list 'load-path "~/.emacs.d/vendor/nxhtml")
-(load "~/.emacs.d/vendor/nxhtml/autostart.el")
-(setq mumamo-background-colors nil)
 
 ;; Nav!
 (add-to-list 'load-path "/Users/cbryan/.emacs.d/nav")
@@ -136,15 +139,13 @@
 (load-file "~/.emacs.d/vendor/sass-mode/sass-mode.el")
 (require 'sass-mode)
 
-;; You can keep system- or user-specific customizations here
-(setq system-specific-config (concat dotfiles-dir system-name ".el")
-      user-specific-config (concat dotfiles-dir user-login-name ".el")
-      user-specific-dir (concat dotfiles-dir user-login-name))
-(add-to-list 'load-path user-specific-dir)
+;; Magit
+;; from https://github.com/jimeh/.emacs.d/blob/master/keybindings.el
+(when (require 'magit nil 'noerror)
+  (global-set-key (kbd "C-x g") 'magit-status))
 
-(if (file-exists-p system-specific-config) (load system-specific-config))
-(if (file-exists-p user-specific-config) (load user-specific-config))
-(if (file-exists-p user-specific-dir)
-  (mapc #'load (directory-files user-specific-dir nil ".*el$")))
-
-;;; init.el ends here
+;; I hate auto-fill-mode
+;; http://stackoverflow.com/questions/1567107/disable-auto-fill-mode-in-noweb-mode/1567431#1567431
+(setq auto-fill-mode -1)
+(setq-default fill-column 99999)
+(setq fill-column 99999)

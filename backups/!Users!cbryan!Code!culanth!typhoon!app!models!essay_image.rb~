@@ -1,0 +1,17 @@
+# == Schema Information
+#
+# Table name: essay_images
+#
+#  id                :integer(4)      not null, primary key
+#  photo_essay_id    :integer(4)      not null
+#  essay_image_asset :string(255)     not null
+#  text              :text
+#  created_at        :datetime
+#  updated_at        :datetime
+#
+
+class EssayImage < ActiveRecord::Base
+  validates_presence_of :photo_essay_id
+  belongs_to :photo_essay
+  mount_uploader :essay_image, EssayImageAssetUploader
+end

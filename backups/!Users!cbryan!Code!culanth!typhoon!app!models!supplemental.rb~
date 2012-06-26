@@ -1,0 +1,17 @@
+class Supplemental < ActiveRecord::Base
+  validates_presence_of :title, :issue, :content
+  belongs_to :issue
+end
+
+# == Schema Information
+#
+# Table name: supplementals
+#
+#  id         :integer         not null, primary key
+#  title      :string(255)
+#  issue_id   :integer
+#  content    :text
+#  created_at :datetime
+#  updated_at :datetime
+#
+

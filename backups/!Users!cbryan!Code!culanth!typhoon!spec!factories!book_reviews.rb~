@@ -1,0 +1,8 @@
+FactoryGirl.define do
+  factory :book_review do
+    title { Random.paragraphs(1) }
+    article_url { Random.paragraphs(1) }
+    association :author, factory: :user
+    association :issue, factory: :issue
+  end
+end

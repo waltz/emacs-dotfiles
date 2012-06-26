@@ -1,0 +1,8 @@
+class CreateEssayImages < ActiveRecord::Migration
+  def change
+    create_table :essay_images do |t|
+
+      t.timestamps
+    end
+  end
+end

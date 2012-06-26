@@ -1,0 +1,19 @@
+%h2 Fieldsights Posts
+
+%p.new= link_to "Create a new Fieldsights Post", new_dashboard_post_path
+
+- if @posts.present?
+  %table
+    %tr
+      %th ID
+      %th Title
+      %th User
+      %th Created On
+    - @posts.each do |i|
+      %tr
+        %td= i.id
+        %td= i.title
+        %td= i.user.email
+        %td= i.created_at
+- else
+  %strong No Posts, get rolling!

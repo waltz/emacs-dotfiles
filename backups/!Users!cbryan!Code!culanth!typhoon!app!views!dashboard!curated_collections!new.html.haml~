@@ -1,0 +1,3 @@
+%fieldset
+  %legend New Fieldsights CuratedCollection
+  = render :partial => "form", :locals => { :curated_collection => @curated_collection }

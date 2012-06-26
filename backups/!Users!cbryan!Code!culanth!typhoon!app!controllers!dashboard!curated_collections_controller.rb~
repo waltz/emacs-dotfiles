@@ -1,0 +1,41 @@
+class Dashboard::PostsController < DashboardController
+
+  def index
+    @posts = Post.all
+  end
+
+  def new
+    @post = Post.new
+  end
+
+  def create
+    @post = Post.new(params[:post])
+    @post.user = current_user
+    if @post.save
+      redirect_to :action => :index
+    else
+      render :action => :new
+    end
+  end
+
+  def edit
+    @post = Post.find(params[:id])
+  end
+
+  def update
+    @post = Post.find(params[:id])
+    @post.update_attributes(params[:post])
+    if @post.save
+      redirect_to :action => :index
+    else
+      render :action => :edit
+    end
+  end
+
+  def destroy
+    Post.destroy(params[:id])
+    flash[:message] = "Your post has been destroyed."
+    redirect_to :action => :index
+  end
+  
+end

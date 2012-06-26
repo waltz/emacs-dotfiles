@@ -1,0 +1,32 @@
+require 'spec_helper'
+
+describe User do
+
+  before :each do
+    @user = User.new
+  end
+  
+  it "should have an email method" do
+    @user.should respond_to :email
+    @user.should respond_to :email=
+  end
+
+  it "should have a password and password confirmation field" do
+    @user.should respond_to :password
+    @user.should respond_to :password=
+
+    @user.should respond_to :password_confirmation
+    @user.should respond_to :password_confirmation=
+  end
+
+  it "should have a role field" do
+    @user.should respond_to :role
+    @user.should respond_to :role=
+  end
+
+  it "should accept a valid admin role" do
+    @user.role = "admin"
+    @user.should have(:no).errors_on(:role)
+  end
+  
+end

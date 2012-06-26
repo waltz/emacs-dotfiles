@@ -1,0 +1,3 @@
+%fieldset
+  %legend New User
+  = render "form", :object => @user

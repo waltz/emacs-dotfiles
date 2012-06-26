@@ -1,0 +1,3 @@
+Factory.define :patient do |p|
+
+end

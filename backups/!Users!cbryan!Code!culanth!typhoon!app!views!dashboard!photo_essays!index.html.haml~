@@ -1,0 +1,22 @@
+%h2 Supplementals
+
+%p.new= link_to "Create a new Supplemental", new_dashboard_supplemental_path
+
+- if @supplementals.present?
+  %table
+    %tr
+      %th Title
+      %th Issue
+      %th Actions
+      %th Created On
+      %th
+    - @supplementals.each do |s|
+      %tr
+        %td= s.title
+        %td= link_to "#{s.issue.volume_number}.#{s.issue.issue_number}", dashboard_issue_path(s.issue)
+        %td
+          = link_to "View", supplemental_path(s)
+          = link_to "Edit", edit_dashboard_supplemental_path(s)
+        %td= s.created_at
+- else
+  %strong No Supplementals, get rolling!

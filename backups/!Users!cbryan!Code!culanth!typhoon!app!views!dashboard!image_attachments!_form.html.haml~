@@ -1,0 +1,21 @@
+= form_for [ :dashboard, image_attachment ], :html => { :multipart => true } do |f|
+
+  = render "shared/error_messages", :target => image_attachment
+
+  %p
+    = f.label :author_name
+    = f.text_field :author_name
+
+  %p
+    = f.label :title
+    = f.text_field :title
+
+  %p
+    = f.label :url
+    = f.text_field :url
+    
+  %p
+    = f.label :image_attachment
+    = f.file_field :image_attachment
+
+  = f.submit
