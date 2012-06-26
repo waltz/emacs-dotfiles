@@ -1,3 +1,0 @@
-%fieldset
-  %legend New Supplemental
-  = render :partial => "form", :locals => { :supplemental => @supplemental }

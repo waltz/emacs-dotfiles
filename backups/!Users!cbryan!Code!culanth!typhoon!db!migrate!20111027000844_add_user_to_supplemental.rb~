@@ -1,4 +1,0 @@
-class AddUserToSupplemental < ActiveRecord::Migration
-  def change
-  end
-end

@@ -1,3 +1,0 @@
-$("#patient_info").html("<%= escape_javascript( render(:file => 'barriers/index')) %>");
-$("li").removeClass("active");
-$("#barriers").addClass("active");

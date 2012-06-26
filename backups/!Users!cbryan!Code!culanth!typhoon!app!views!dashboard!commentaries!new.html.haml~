@@ -1,3 +1,0 @@
-%fieldset
-  %legend New Curated Collection
-  = render :partial => "form", :locals => { :curated_collection => @curated_collection }

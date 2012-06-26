@@ -1,7 +1,0 @@
-Factory.define :barrier do |b|
-  b.patient { |p| p.association(:user) }
-  b.barrier_type { |bt| bt.association(:barrier_type) }
-
-  b.note { Random.paragraphs(1) }
-  b.date { Random.date }
-end

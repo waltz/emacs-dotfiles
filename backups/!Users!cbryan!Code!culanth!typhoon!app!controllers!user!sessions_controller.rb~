@@ -1,3 +1,0 @@
-# http://stackoverflow.com/questions/6646845/customizing-devise-views-in-rails/6647210#6647210
-class SessionsController < Devise::SessionsController
-end

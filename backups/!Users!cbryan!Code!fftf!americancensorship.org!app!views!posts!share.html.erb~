@@ -1,5 +1,0 @@
-Share this post with your friends:
-
-<p>
-  <%= @post.censored_post + " " + post_path(@post) %>
-</p>

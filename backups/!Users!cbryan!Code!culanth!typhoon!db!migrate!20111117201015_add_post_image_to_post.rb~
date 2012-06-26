@@ -1,4 +1,0 @@
-class AddPostImageToPost < ActiveRecord::Migration
-  def change
-  end
-end

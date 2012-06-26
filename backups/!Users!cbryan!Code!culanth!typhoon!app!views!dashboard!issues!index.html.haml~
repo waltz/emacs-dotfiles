@@ -1,3 +1,0 @@
-%h2 Issues
-
-%span.new= link_to "Create a new Issue", new_dashboard_issue_path

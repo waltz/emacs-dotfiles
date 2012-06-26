@@ -38,9 +38,9 @@
 ;; since they are likely to be used in every session
 
 ;; (require 'cl)
-;; (require 'saveplace)
+(require 'saveplace)
 ;; (require 'ffap)
-;; (require 'uniquify)
+(require 'uniquify)
 ;; (require 'ansi-color)
 ;; (require 'recentf)
 

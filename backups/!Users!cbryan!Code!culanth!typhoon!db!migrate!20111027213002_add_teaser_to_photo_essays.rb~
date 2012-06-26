@@ -1,4 +1,0 @@
-class AddTeaserToPhotoEssays < ActiveRecord::Migration
-  def change
-  end
-end

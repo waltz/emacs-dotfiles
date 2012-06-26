@@ -1,3 +1,0 @@
-%fieldset
-  %legend New Commentary
-  = render :partial => "form", :locals => { :commentary => @commentary } 

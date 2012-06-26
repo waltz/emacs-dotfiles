@@ -1,3 +1,0 @@
-Write Congress! And we'll decode your form!
-
-<%= link_to uncensor_post_path(@post) %>

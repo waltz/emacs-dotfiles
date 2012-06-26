@@ -1,3 +1,0 @@
-%fieldset
-  %legend New Issue
-  = render :partial => "form", :locals => { :issue => @issue }
