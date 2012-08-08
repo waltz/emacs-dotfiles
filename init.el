@@ -21,16 +21,12 @@
 ;;                     (or (buffer-file-name) load-file-name)))
 
 ;; Load up ELPA, the package manager
-
+;; (require 'package)
 ;; (add-to-list 'load-path dotfiles-dir)
-
 ;; (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
-
 ;; (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 ;; (setq package-user-dir (concat dotfiles-dir "elpa"))
 ;; (setq custom-file (concat dotfiles-dir "custom.el"))
-
-;; (require 'package)
 ;; (package-initialize)
 ;; (require 'starter-kit-elpa)
 
@@ -56,11 +52,15 @@
 ;; (require 'starter-kit-eshell)
 ;; (require 'starter-kit-lisp)
 ;; (require 'starter-kit-perl)
-;; (require 'starter-kit-ruby)
+(require 'starter-kit-ruby)
 ;; (require 'starter-kit-js)
 
 ;; (regen-autoloads)
 ;; (load custom-file 'noerror)
+
+;; Rinari. Tasty Rails goodness.
+(add-to-list 'load-path "~/.emacs.d/vendor/rinari")
+(require 'rinari)
 
 ;; Dear lord, indentation preferences!
 (setq-default indent-tabs-mode nil)
@@ -102,6 +102,7 @@
 
 ;; Nav!
 (add-to-list 'load-path "/Users/cbryan/.emacs.d/nav")
+(global-set-key "\C-cn" 'nav-toggle)
 
 ;; Pull in color-theme.
 (require 'color-theme)
