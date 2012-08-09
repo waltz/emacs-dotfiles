@@ -36,7 +36,7 @@
 ;; (require 'cl)
 (require 'saveplace)
 ;; (require 'ffap)
-(require 'uniquify)
+
 ;; (require 'ansi-color)
 ;; (require 'recentf)
 
@@ -45,7 +45,7 @@
 
 ;; Load up starter kit customizations
 
-;; (require 'starter-kit-defuns)
+(require 'starter-kit-defuns)
 ;; (require 'starter-kit-bindings)
 ;; (require 'starter-kit-misc)
 ;; (require 'starter-kit-registers)
@@ -57,6 +57,12 @@
 
 ;; (regen-autoloads)
 ;; (load custom-file 'noerror)
+
+;; Uniquify. Sane buffer naming.
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+(setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
+(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
 ;; Rinari. Tasty Rails goodness.
 (add-to-list 'load-path "~/.emacs.d/vendor/rinari")
