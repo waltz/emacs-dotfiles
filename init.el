@@ -1,14 +1,3 @@
-;;; init.el --- Where all the magic begins
-;;
-;; Part of the Emacs Starter Kit
-;;
-;; This is the first thing to get loaded.
-;;
-;; "Emacs outshines all other editing software in approximately the
-;; same way that the noonday sun does the stars. It is not just bigger
-;; and brighter; it simply makes everything else vanish."
-;; -Neal Stephenson, "In the Beginning was the Command Line"
-
 ;; Turn off mouse interface early in startup to avoid momentary display
 ;; You really don't need these; trust me.
 ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -16,47 +5,13 @@
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 ;; Load path etc.
+(setq dotfiles-dir (file-name-directory
+                    (or (buffer-file-name) load-file-name)))
 
-;; (setq dotfiles-dir (file-name-directory
-;;                     (or (buffer-file-name) load-file-name)))
-
-;; Load up ELPA, the package manager
-;; (require 'package)
-;; (add-to-list 'load-path dotfiles-dir)
-;; (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
-;; (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
-;; (setq package-user-dir (concat dotfiles-dir "elpa"))
-;; (setq custom-file (concat dotfiles-dir "custom.el"))
-;; (package-initialize)
-;; (require 'starter-kit-elpa)
-
-;; These should be loaded on startup rather than autoloaded on demand
-;; since they are likely to be used in every session
-
-;; (require 'cl)
+(add-to-list 'load-path "~/.emacs.d/")
 (require 'saveplace)
-;; (require 'ffap)
-
-;; (require 'ansi-color)
-;; (require 'recentf)
-
-;; backport some functionality to Emacs 22 if needed
-;; (require 'dominating-file)
-
-;; Load up starter kit customizations
-
 (require 'starter-kit-defuns)
-;; (require 'starter-kit-bindings)
-;; (require 'starter-kit-misc)
-;; (require 'starter-kit-registers)
-;; (require 'starter-kit-eshell)
-;; (require 'starter-kit-lisp)
-;; (require 'starter-kit-perl)
 (require 'starter-kit-ruby)
-;; (require 'starter-kit-js)
-
-;; (regen-autoloads)
-;; (load custom-file 'noerror)
 
 ;; Uniquify. Sane buffer naming.
 (require 'uniquify)
@@ -95,10 +50,6 @@
 ;; (setq-default js2-consistent-level-indent-inner-bracket-p 1)
 ;; (setq-default js2-pretty-multiline-decl-indentation-p 1)
 
-;; Load prefs.
-;;(setq custom-file "~/.emacs.d/custom.el")
-;;(load custom-file)
-
 ;; AAAACK
 (add-to-list 'load-path "~/.emacs.d/vendor/full-ack")
 (autoload 'ack-same "full-ack" nil t)
@@ -107,12 +58,14 @@
 (autoload 'ack-find-file "full-ack" nil t)
 
 ;; Nav!
-(add-to-list 'load-path "/Users/cbryan/.emacs.d/nav")
+(add-to-list 'load-path "~/.emacs.d/vendor/nav")
+(require 'nav)
 (global-set-key "\C-cn" 'nav-toggle)
 
 ;; Pull in color-theme.
+(add-to-list 'load-path "~/.emacs.d/vendor/color-theme")
 (require 'color-theme)
-(load-file "~/.emacs.d/themes/color-theme-almost-monokai.el")
+(load-file "~/.emacs.d/vendor/color-theme/themes/color-theme-almost-monokai.el")
 (color-theme-almost-monokai)
 
 ;; Fix forward delete.
@@ -121,10 +74,6 @@
 
 ;; Set the default font.
 (set-face-attribute 'default nil :font "Inconsolata-14")
-
-;; text-mate like project bar
-(add-to-list 'load-path "~/.emacs.d/nav")
-(require 'nav)
 
 ;; TextMate adapter junk.
 (load-file "~/.emacs.d/vendor/textmate.el")
