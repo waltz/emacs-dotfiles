@@ -10,7 +10,6 @@
 
 (add-to-list 'load-path "~/.emacs.d/")
 (require 'saveplace)
-(require 'starter-kit-defuns)
 (require 'starter-kit-ruby)
 
 ;; Uniquify. Sane buffer naming.
@@ -18,6 +17,10 @@
 (setq uniquify-buffer-name-style 'forward)
 (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+
+;; Interactively Do Things (highly recommended, but not strictly required)
+(require 'ido)
+(ido-mode t)
 
 ;; Rinari. Tasty Rails goodness.
 (add-to-list 'load-path "~/.emacs.d/vendor/rinari")
@@ -41,7 +44,7 @@
 ;; nXhtml for sweet sweet web editing.
 (add-to-list 'load-path "~/.emacs.d/vendor/nxhtml")
 (load "~/.emacs.d/vendor/nxhtml/autostart.el")
-(setq mumamo-background-colors nil)
+;; (setq mumamo-background-colors nil)
 
 ;; js2-mode
 (add-to-list 'load-path "~/.emacs.d/vendor/js2-mode")
