@@ -13,3 +13,6 @@
 [submodule "vendor/inf-ruby"]
 	path = vendor/inf-ruby
 	url = https://github.com/nonsequitur/inf-ruby.git
+[submodule "vendor/nxhtml"]
+	path = vendor/nxhtml
+	url = https://github.com/emacsmirror/nxhtml.git

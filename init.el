@@ -1,3 +1,6 @@
+;; highlight the world
+(global-font-lock-mode 1)
+
 ;; Turn off mouse interface early in startup to avoid momentary display
 ;; You really don't need these; trust me.
 ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -9,8 +12,10 @@
                     (or (buffer-file-name) load-file-name)))
 
 (add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/vendor")
 (require 'saveplace)
-(require 'starter-kit-ruby)
+
+(require 'cl)
 
 ;; Uniquify. Sane buffer naming.
 (require 'uniquify)
@@ -108,3 +113,7 @@
 (setq auto-fill-mode -1)
 (setq-default fill-column 99999)
 (setq fill-column 99999)
+
+;; Remember the size of the window between restarts.
+(require 'frame-restore)
+;(progn (require 'desktop) (customize-set-variable 'desktop-enable t) (desktop-save "~/") (require 'frame-restore))
