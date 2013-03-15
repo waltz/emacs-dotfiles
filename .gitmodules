@@ -1,6 +1,6 @@
 [submodule "vendor/haml-mode"]
 	path = vendor/haml-mode
-	url = https://github.com/nex3/haml-mode.git
+	url = https://github.com/dsedivec/haml-mode
 [submodule "vendor/sass-mode"]
 	path = vendor/sass-mode
 	url = https://github.com/nex3/sass-mode.git
@@ -16,3 +16,6 @@
 [submodule "vendor/nxhtml"]
 	path = vendor/nxhtml
 	url = https://github.com/emacsmirror/nxhtml.git
+[submodule "vendor/markdown-mode"]
+	path = vendor/markdown-mode
+	url = git://jblevins.org/git/markdown-mode.git
